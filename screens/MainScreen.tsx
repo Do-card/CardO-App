@@ -1,12 +1,12 @@
 // MainScreen.tsx
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import WebViewComponent from '../components/WEbViewComponent';
+import WebViewComponent from '../components/WebViewComponent';
 
 const MainScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <WebViewComponent uri="https://naver.com" />
+      <WebViewComponent uri="http://naver.com" />
     </SafeAreaView>
   );
 };
