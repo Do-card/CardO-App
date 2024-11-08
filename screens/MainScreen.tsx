@@ -23,7 +23,7 @@ const MainScreen: React.FC = () => {
         url ? (
           <WebViewComponent uri = {url} />
         ): (
-          <WebViewComponent uri="https://k11a402.p.ssafy.io/login" />
+          <WebViewComponent uri="https://k11a402.p.ssafy.io" />
         )
       }
       
