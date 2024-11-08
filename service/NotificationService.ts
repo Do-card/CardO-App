@@ -1,27 +1,35 @@
 // src/services/NotificationService.ts
 import PushNotification from 'react-native-push-notification';
-import {Linking} from 'react-native';
-
 class NotificationService {
+  private urlHandler: ((url: string) => void) | null = null;
+
   constructor() {
     this.configure();
   }
 
   configure = () => {
     PushNotification.configure({
-      onNotification: function (notification) {
+      onNotification: notification => {
         console.log('알림을 수신했습니다:', notification);
-        // finish 메서드 제거
 
-        // 알림 클릭 시 특정 URL로 이동
-        if (notification.userInteraction && notification.data.url) {
-          Linking.openURL(notification.data.url).catch(err =>
-            console.error('Failed to open URL:', err),
-          );
+        // 알림 클릭 시 URL이 있으면 핸들러로 전달
+        if (
+          notification.userInteraction &&
+          notification.data.url &&
+          this.urlHandler
+        ) {
+          this.urlHandler(notification.data.url);
         }
       },
     });
   };
+
+  onNotification(handler: (url: string) => void) {
+    this.urlHandler = handler;
+    return () => {
+      this.urlHandler = null;
+    };
+  }
 
   // 로컬 알림 생성
   showNotification = (title: string, message: string) => {
@@ -29,6 +37,9 @@ class NotificationService {
       channelId: 'default-channel-id', // 채널 ID가 필요합니다.
       title: title,
       message: message,
+      smallIcon: 'favicon', // 작은 아이콘 설정 (drawable 폴더에 ic_notification.png 필요)
+      bigPictureUrl: 'drawable/favicon', // 큰 이미지 설정 (drawable 폴더에 ic_large_image.png 필요)
+      largeIcon: 'favicon', // 큰 아이콘 설정 (mipmap 폴더의 기본 아이콘 사용 가능)
     });
   };
 
@@ -39,10 +50,10 @@ class NotificationService {
         channelId: 'default-channel-id', // 채널 ID
         channelName: 'Default Channel', // 채널 이름
         channelDescription: 'A default channel', // 채널 설명
-        importance: 4, // 알림 중요도
+        importance: 2, // 알림 중요도
         vibrate: true,
       },
-      created => console.log(`채널 생성 여부: '${created}'`), // 성공 여부 로그
+      created => console.log(`푸시 알림 채널 생성 여부: '${created}'`), // 성공 여부 로그
     );
   };
 }
